@@ -2,6 +2,8 @@
 #include<stdlib.h>
 #include<cuda_runtime.h>
 #include<math.h>
+#include<time.h>
+
 
 #define BLOCK_SIZE 8
 #define WIDTH 512
@@ -58,7 +60,7 @@ int main()
     // const int WIDTH = 512;
     long size = HEIGHT * WIDTH * sizeof(float);
     long size_result = HEIGHT * HEIGHT * sizeof(float);
-    printf("size: %ld, size_result: %ld\n", size, size_result);
+    // printf("size: %ld, size_result: %ld\n", size, size_result);
     float array1_h[HEIGHT][WIDTH], array2_h[WIDTH][HEIGHT], result_array_h[HEIGHT][HEIGHT];
     memset(result_array_h, 0.0, size_result);
     float *array1_d, *array2_d, *result_array_d;
@@ -76,7 +78,7 @@ int main()
             array2_h[i][j] = cos(i+j);
         }
     }
-    printf("array1_h[0][0]: %f\n", array1_h[5][5]);
+    // printf("array1_h[5][5]: %.3f\n", array1_h[5][5]);
     cudaMalloc((void**) &array1_d, size);
     cudaMalloc((void**) &array2_d, size);
     cudaMalloc((void**) &result_array_d, size_result);
@@ -86,40 +88,76 @@ int main()
 
     dim3 dimBlock(BLOCK_SIZE, BLOCK_SIZE);
     dim3 dimGrid(HEIGHT/BLOCK_SIZE, HEIGHT/BLOCK_SIZE);
-    cudaEventRecord(start, 0);
-    matrixMulSharedMemory<<<dimGrid, dimBlock>>>(array1_d, array2_d, result_array_d, HEIGHT, WIDTH);
-    // matrixMulCuda<<<dimGrid, dimBlock>>>(array1_d, array2_d, result_array_d, HEIGHT, WIDTH);
-    cudaMemcpy(result_array_h, result_array_d, size_result, cudaMemcpyDeviceToHost);
-    cudaError_t error = cudaGetLastError();
-	if (error != cudaSuccess) {
-  		fprintf(stderr, "ERROR: %s \n", cudaGetErrorString(error));
-	}
-    cudaEventRecord(stop, 0);
-    cudaEventSynchronize(stop);
-    cudaEventElapsedTime(&elapsed_time, start, stop);
-    printf("elapsed time: %.3f\n", elapsed_time);
-    
-    float err = 0.0;
+    // benckmark elapsed time
+    int num_runs = 6;
+    double elapsed_time_gpu = 0.0;
+    for (int r=0; r<num_runs; ++r)
+    {
+        cudaEventRecord(start, 0); // 0 stands for the stream id
+        // matrixMulSharedMemory<<<dimGrid, dimBlock>>>(array1_d, array2_d, result_array_d, HEIGHT, WIDTH);
+        matrixMulCuda<<<dimGrid, dimBlock>>>(array1_d, array2_d, result_array_d, HEIGHT, WIDTH);
+        cudaMemcpy(result_array_h, result_array_d, size_result, cudaMemcpyDeviceToHost);
+        cudaError_t error = cudaGetLastError();
+        if (error != cudaSuccess) {
+            fprintf(stderr, "ERROR: %s \n", cudaGetErrorString(error));
+        }
+        cudaEventRecord(stop, 0);
+        cudaEventSynchronize(stop);
+        cudaEventElapsedTime(&elapsed_time, start, stop);      
+        if (r > 0) elapsed_time_gpu += elapsed_time;  
+    }
+    printf("elapsed time on GPU: %.3f ms\n", elapsed_time_gpu / (num_runs - 1));
+
+    double elapsed_time_shared_memory = 0.0;
+    for (int r=0; r<num_runs; ++r)
+    {
+        cudaEventRecord(start, 0); // 0 stands for the stream id
+        matrixMulSharedMemory<<<dimGrid, dimBlock>>>(array1_d, array2_d, result_array_d, HEIGHT, WIDTH);
+        // matrixMulCuda<<<dimGrid, dimBlock>>>(array1_d, array2_d, result_array_d, HEIGHT, WIDTH);
+        cudaMemcpy(result_array_h, result_array_d, size_result, cudaMemcpyDeviceToHost);
+        cudaError_t error = cudaGetLastError();
+        if (error != cudaSuccess) {
+            fprintf(stderr, "ERROR: %s \n", cudaGetErrorString(error));
+        }
+        cudaEventRecord(stop, 0);
+        cudaEventSynchronize(stop);
+        cudaEventElapsedTime(&elapsed_time, start, stop);      
+        if (r > 0) elapsed_time_shared_memory += elapsed_time;  
+    }
+    printf("elapsed time on GPU using shared memory: %.3f ms\n", elapsed_time_shared_memory / (num_runs - 1));
+
+    // benckmark correctness and wall-clock time    
     float cpu_C[HEIGHT][HEIGHT];
     double tmpSum;
-    for (i=0; i<HEIGHT; i++)
-    {
-        for (j=0; j<HEIGHT; j++)
+    double elapsed_time_cpu = 0.0;
+    // float err = 0.0;    
+    for (int r=0; r<num_runs; ++r)
+    {   clock_t begin = clock();
+        for (i=0; i<HEIGHT; i++)
         {
-            tmpSum = 0.0;
-            for (int k=0; k<WIDTH; k++)
+            for (j=0; j<HEIGHT; j++)
             {
-                tmpSum += array1_h[i][k] * array2_h[k][j];
-            }
-            cpu_C[i][j] = tmpSum;
-            err += fabs(cpu_C[i][j] - result_array_h[i][j]);
-            if (i<3 && j<3)
-            {
-                printf("cpu_C[%d][%d]: %f, host_C[%d][%d]: %f\n", i, j, cpu_C[i][j], i, j, result_array_h[i][j]);
+                tmpSum = 0.0;
+                for (int k=0; k<WIDTH; k++)
+                {
+                    tmpSum += array1_h[i][k] * array2_h[k][j];
+                }
+                cpu_C[i][j] = tmpSum;
+                // err += fabs(cpu_C[i][j] - result_array_h[i][j]);
+                // if (i<3 && j<3)
+                // {
+                //     printf("cpu_C[%d][%d]: %.3f, host_C[%d][%d]: %.3f\n", i, j, cpu_C[i][j], i, j, result_array_h[i][j]);
+                // }
             }
         }
-    }
-    printf("err: %f\n", err);
+        clock_t end = clock();
+        if (r > 0){
+            double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+            elapsed_time_cpu += time_spent;
+        }            
+    }        
+    printf("elapsed time on CPU: %.3f ms\n", (elapsed_time_cpu * 1000) / (num_runs - 1));
+    // printf("err: %.3f\n", err);
     cudaFree(array1_d);
     cudaFree(array2_d);
     cudaFree(result_array_d);
