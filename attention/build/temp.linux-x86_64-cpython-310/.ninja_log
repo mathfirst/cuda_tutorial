@@ -1,0 +1,5 @@
+# ninja log v5
+1	18091	1698198618514518490	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/softmax/build/temp.linux-x86_64-cpython-310/matmul.o	3547257950ac9fcd
+0	49196	1698198649418593293	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/softmax/build/temp.linux-x86_64-cpython-310/attention_shared_memory.o	b8e6d3857200d451
+13	51064	1698198907391217710	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/softmax/build/temp.linux-x86_64-cpython-310/attention_shared_memory.o	b8e6d3857200d451
+17	50829	1698198990223418205	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/softmax/build/temp.linux-x86_64-cpython-310/attention_shared_memory.o	b8e6d3857200d451

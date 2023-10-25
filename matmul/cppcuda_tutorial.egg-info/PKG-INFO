@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: cppcuda-tutorial
+Version: 1.0
+Summary: cppcuda example
+Author: Youming Zhao
+Author-email: youming0.zhao@gmail.com
+
+cppcuda example for Pytorch

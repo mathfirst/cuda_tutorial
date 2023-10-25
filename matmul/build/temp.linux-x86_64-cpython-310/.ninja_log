@@ -1,0 +1,3 @@
+# ninja log v5
+0	21012	1697944621092415095	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/matmul/build/temp.linux-x86_64-cpython-310/matmul.o	7bbcb9c0304dbbe0
+4	54776	1697944654636481282	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/matmul/build/temp.linux-x86_64-cpython-310/matmul_kernel.o	62fd2fa4679164c6
