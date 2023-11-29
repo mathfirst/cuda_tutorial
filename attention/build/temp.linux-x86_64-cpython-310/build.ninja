@@ -2,10 +2,10 @@ ninja_required_version = 1.3
 cxx = c++
 nvcc = /usr/local/cuda-11.7/bin/nvcc
 
-cflags = -pthread -B /home/zhaoyouming/anaconda3/envs/accel/compiler_compat -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /home/zhaoyouming/anaconda3/envs/accel/include -fPIC -O2 -isystem /home/zhaoyouming/anaconda3/envs/accel/include -fPIC -I/home/zhaoyouming/cuda_tutorial/cuda_tutorial/softmax/include -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include/TH -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include/THC -I/usr/local/cuda-11.7/include -I/home/zhaoyouming/anaconda3/envs/accel/include/python3.10 -c
+cflags = -pthread -B /home/zhaoyouming/anaconda3/envs/accel/compiler_compat -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /home/zhaoyouming/anaconda3/envs/accel/include -fPIC -O2 -isystem /home/zhaoyouming/anaconda3/envs/accel/include -fPIC -I/home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/include -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include/TH -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include/THC -I/usr/local/cuda-11.7/include -I/home/zhaoyouming/anaconda3/envs/accel/include/python3.10 -c
 post_cflags = -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=cppcuda_tutorial -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++17
-cuda_cflags = -I/home/zhaoyouming/cuda_tutorial/cuda_tutorial/softmax/include -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include/TH -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include/THC -I/usr/local/cuda-11.7/include -I/home/zhaoyouming/anaconda3/envs/accel/include/python3.10 -c
-cuda_post_cflags = -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=cppcuda_tutorial -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_80,code=compute_80 -gencode=arch=compute_80,code=sm_80 -std=c++17
+cuda_cflags = -I/home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/include -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include/TH -I/home/zhaoyouming/anaconda3/envs/accel/lib/python3.10/site-packages/torch/include/THC -I/usr/local/cuda-11.7/include -I/home/zhaoyouming/anaconda3/envs/accel/include/python3.10 -c
+cuda_post_cflags = -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -code=sm_80 -arch=compute_80 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=cppcuda_tutorial -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++17
 cuda_dlink_post_cflags = 
 ldflags = 
 
@@ -23,8 +23,9 @@ rule cuda_compile
 
 
 
-build /home/zhaoyouming/cuda_tutorial/cuda_tutorial/softmax/build/temp.linux-x86_64-cpython-310/attention_shared_memory.o: cuda_compile /home/zhaoyouming/cuda_tutorial/cuda_tutorial/softmax/attention_shared_memory.cu
-build /home/zhaoyouming/cuda_tutorial/cuda_tutorial/softmax/build/temp.linux-x86_64-cpython-310/matmul.o: compile /home/zhaoyouming/cuda_tutorial/cuda_tutorial/softmax/matmul.cpp
+build /home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/build/temp.linux-x86_64-cpython-310/attention.o: cuda_compile /home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/attention.cu
+build /home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/build/temp.linux-x86_64-cpython-310/attention_shared_memory.o: cuda_compile /home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/attention_shared_memory.cu
+build /home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/build/temp.linux-x86_64-cpython-310/matmul.o: compile /home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/matmul.cpp
 
 
 

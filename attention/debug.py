@@ -3,14 +3,18 @@ import torch, time
 import cppcuda_tutorial
 
 if __name__ == "__main__":
-    iDev = 5
+    iDev = 3
     N = 128
     d = 32
+    tau = 1.0 / d**0.5
+    
     A = torch.rand(N, d, device=f'cuda:{iDev}', dtype=torch.float32)
     # A = torch.ones(N, d, device=f'cuda:{iDev}', dtype=torch.float32)
     B = A.t().contiguous()
-    C, M = cppcuda_tutorial.attention_test(A, A, A, iDev)
-    result = A@B
+    # C, M = cppcuda_tutorial.attention_test(A, A, A, tau, iDev)
+    C, M = cppcuda_tutorial.attention_half(A.to(torch.float16), A.to(torch.float16), A, tau, iDev)
+    tau = torch.Tensor([tau]).half().to(f'cuda:{iDev}')
+    result = ((tau * A.half()) @ B.half()).float()
     # print(torch.allclose(C, result))
     # print(f"result: \n{result[:3, :3]}")
     # print(f"C: \n{C[:3, :3]}")
@@ -18,14 +22,15 @@ if __name__ == "__main__":
     # print(f"C: \n{C[-3:, -3:]}")
     M_gt = torch.max(result, dim=-1)[0]
     unnormalized_score = torch.exp(result - M_gt.unsqueeze(-1))
-    L = torch.sum(unnormalized_score, dim=-1, keepdim=True)
-    print(L.shape, M.shape)
-    score = unnormalized_score / L
+    l = torch.sum(unnormalized_score, dim=-1, keepdim=True)
+    L = M_gt + torch.log(l.squeeze())
+    print(l.shape, L.shape, M.shape, M_gt.shape)
+    score = unnormalized_score / l
     result = score @ A
-    print(torch.allclose(L.squeeze(), M))
-    print(torch.allclose(result, C))
-    # print(L.squeeze())
-    # print(M)
+    print(torch.allclose(L.squeeze(), M, rtol=1e-04, atol=1e-04))
+    print(torch.allclose(result, C, rtol=1e-04, atol=1e-04))
+    print(L.squeeze())
+    print(M)
     # N_ls = [512, 1024,]# 2048, 4096]
     # d_ls = [32, ]
     # for N in N_ls:

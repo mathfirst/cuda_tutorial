@@ -1,5 +1,9 @@
 # ninja log v5
-1	18091	1698198618514518490	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/softmax/build/temp.linux-x86_64-cpython-310/matmul.o	3547257950ac9fcd
-0	49196	1698198649418593293	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/softmax/build/temp.linux-x86_64-cpython-310/attention_shared_memory.o	b8e6d3857200d451
-13	51064	1698198907391217710	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/softmax/build/temp.linux-x86_64-cpython-310/attention_shared_memory.o	b8e6d3857200d451
-17	50829	1698198990223418205	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/softmax/build/temp.linux-x86_64-cpython-310/attention_shared_memory.o	b8e6d3857200d451
+1	17880	1700884665884466588	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/build/temp.linux-x86_64-cpython-310/matmul.o	ecc9e1ed05580152
+0	45422	1700884693424438706	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/build/temp.linux-x86_64-cpython-310/attention.o	c89ffa2307677bfb
+1	46742	1700884694740437374	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/build/temp.linux-x86_64-cpython-310/attention_shared_memory.o	d6f1a6795162f50
+20	46726	1701054152480392963	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/build/temp.linux-x86_64-cpython-310/attention_shared_memory.o	d6f1a6795162f50
+15	46533	1701054416860246230	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/build/temp.linux-x86_64-cpython-310/attention_shared_memory.o	d6f1a6795162f50
+22	50231	1701056146611796542	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/build/temp.linux-x86_64-cpython-310/attention_shared_memory.o	d6f1a6795162f50
+21	49253	1701056821691762066	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/build/temp.linux-x86_64-cpython-310/attention_shared_memory.o	d6f1a6795162f50
+22	71030	1701070985676538620	/home/zhaoyouming/cuda_tutorial/cuda_tutorial/attention/build/temp.linux-x86_64-cpython-310/attention_shared_memory.o	d6f1a6795162f50

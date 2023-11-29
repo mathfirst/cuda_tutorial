@@ -20,7 +20,8 @@ setup(
             name="cppcuda_tutorial",
             sources=sources,
             include_dirs=include_dirs,
-            #extra_compile_args={'cxx': ['-02'], 'nvcc': ['-02']}  # (optional) code optimization
+            extra_compile_args={'nvcc': ['-code=sm_80', '-arch=compute_80']}
+            # extra_compile_args={'nvcc': ['-rdc=true']}  # (optional) code optimization
         )
     ],
     cmdclass={
